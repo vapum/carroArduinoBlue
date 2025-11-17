@@ -2,10 +2,10 @@
 
 
 //motores utilizado no arduino
-AF_DCMotor  motor1(1);
-AF_DCMotor  motor2(2);
-AF_DCMotor  motor3(3);
-AF_DCMotor  motor4(4);
+AF_DCMotor motor1(1);
+AF_DCMotor motor2(2);
+AF_DCMotor motor3(3);
+AF_DCMotor motor4(4);
 
 
 // Definindo pinos para o controle de velocidade dos motores
@@ -26,6 +26,9 @@ MOTOR 4 É O SEGUNDO MOTOR DIREITO
 int velocidade = 255;
 int parar = 0;
 
+unsigned long ultimoComando = 0;
+unsigned long timeout = 150;
+
 void frente() {
   motor1.setSpeed(velocidade);
   motor2.setSpeed(velocidade);
@@ -36,7 +39,6 @@ void frente() {
   motor2.run(FORWARD);
   motor3.run(FORWARD);
   motor4.run(FORWARD);
-
 }
 
 void tras() {
@@ -49,7 +51,6 @@ void tras() {
   motor2.run(BACKWARD);
   motor3.run(BACKWARD);
   motor4.run(BACKWARD);
-
 }
 
 void esquerda() {
@@ -64,7 +65,7 @@ void esquerda() {
   motor4.run(FORWARD);
 }
 
-void direita(){
+void direita() {
   motor1.setSpeed(velocidade);
   motor2.setSpeed(velocidade);
   motor3.setSpeed(velocidade);
@@ -74,7 +75,6 @@ void direita(){
   motor2.run(FORWARD);
   motor3.run(BACKWARD);
   motor4.run(BACKWARD);
-
 }
 
 void parado() {
@@ -97,6 +97,8 @@ void setup() {
   motor2.setSpeed(0);
   motor3.setSpeed(0);
   motor4.setSpeed(0);
+
+  parado();
 }
 
 
@@ -107,33 +109,41 @@ void loop() {
 
   if (Serial.available() > 0) {
     cha = Serial.read();
-    delay(2);
+    ultimoComando = millis();
+
+    if (Serial.available() > 0) {
+      cha = Serial.read();
+      delay(2);
+    }
+
+    if (cha == 'F') {
+      frente();
+      Serial.println("Movendo para Frente");
+    }
+
+    if (cha == 'T') {
+      tras();
+      Serial.println("Movendo para Tras");
+    }
+
+    if (cha == 'E') {
+      esquerda();
+      Serial.println("Movendo para Esquerda");
+    }
+
+    if (cha == 'D') {
+      direita();
+      Serial.println("Movendo para Direita");
+    }
+
+
+    if (cha == 'P' || cha == 'p') {
+      parado();
+      Serial.println("O carrinho esta parado");
+    }
   }
 
-  if (cha == 'F') {
-    frente();   
-    Serial.println("Movendo para Frente");
-  }
-
-  if (cha == 'T') {
-    tras();   
-    Serial.println("Movendo para Tras");
-  }
-
-  if (cha == 'E') {
-    esquerda();
-    Serial.println("Movendo para Esquerda");
-  }
-
-  if (cha == 'D') {
-    direita();   
-    Serial.println("Movendo para Direita");
-  }
-
-
-  if (cha == 'P' || cha == 'p') {
-    parado();        
-    Serial.println("O carrinho esta parado");
+  if (millis() - ultimoComando > timeout) {
+    parado();
   }
 }
-
