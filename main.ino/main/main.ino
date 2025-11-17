@@ -23,7 +23,7 @@ MOTOR 2 É O SEGUNDO MOTOR ESQUERDO
 MOTOR 3 É O PRIMEIRO MOTOR DIREITO
 MOTOR 4 É O SEGUNDO MOTOR DIREITO
 */
-int velocidade = 80;
+int velocidade = 255;
 int parar = 0;
 
 void frente() {
@@ -53,9 +53,13 @@ void tras() {
 }
 
 void esquerda() {
+  motor1.setSpeed(velocidade);
+  motor2.setSpeed(velocidade);
   motor3.setSpeed(velocidade);
   motor4.setSpeed(velocidade);
 
+  motor1.run(BACKWARD);
+  motor2.run(BACKWARD);
   motor3.run(FORWARD);
   motor4.run(FORWARD);
 }
@@ -63,9 +67,13 @@ void esquerda() {
 void direita(){
   motor1.setSpeed(velocidade);
   motor2.setSpeed(velocidade);
+  motor3.setSpeed(velocidade);
+  motor4.setSpeed(velocidade);
 
   motor1.run(FORWARD);
   motor2.run(FORWARD);
+  motor3.run(BACKWARD);
+  motor4.run(BACKWARD);
 
 }
 
